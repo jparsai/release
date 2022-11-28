@@ -1,0 +1,70 @@
+base_images:
+  cli:
+    name: "4.10"
+    namespace: ocp
+    tag: cli
+binary_build_commands: make bin
+build_root:
+  project_image:
+    dockerfile_path: .ci/openshift-ci/Dockerfile
+images:
+- dockerfile_path: Dockerfile
+  to: redhat-appstudio-managedgitops-image
+releases:
+  latest:
+    release:
+      architecture: amd64
+      channel: stable
+      version: "4.11"
+resources:
+  '*':
+    limits:
+      memory: 4Gi
+    requests:
+      cpu: 100m
+      memory: 200Mi
+tests:
+- as: managed-gitops-unit-tests
+  cluster_claim:
+    architecture: amd64
+    cloud: aws
+    owner: openshift-ci
+    product: ocp
+    timeout: 1h0m0s
+    version: "4.11"
+  steps:
+    test:
+    - as: managed-gitops-unit-tests
+      cli: latest
+      commands: |
+        make install-all-k8s IMG=redhat-appstudio-managedgitops-image:latest
+        make test
+      from: redhat-appstudio-managedgitops-image
+      resources:
+        requests:
+          cpu: 100m
+    workflow: generic-claim
+- as: managed-gitops-e2e-tests
+  cluster_claim:
+    architecture: amd64
+    cloud: aws
+    owner: openshift-ci
+    product: ocp
+    timeout: 1h0m0s
+    version: "4.11"
+  steps:
+    test:
+    - as: managed-gitops-e2e-tests
+      cli: latest
+      commands: |
+        make install-all-k8s IMG=redhat-appstudio-managedgitops-image:latest
+        make test-e2e
+      from: redhat-appstudio-managedgitops-image
+      resources:
+        requests:
+          cpu: 100m
+    workflow: generic-claim
+zz_generated_metadata:
+  branch: openShiftCI
+  org: redhat-appstudio
+  repo: managed-gitops
