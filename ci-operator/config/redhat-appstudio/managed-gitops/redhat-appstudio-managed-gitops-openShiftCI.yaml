@@ -37,9 +37,12 @@ tests:
     - as: managed-gitops-unit-tests
       cli: latest
       commands: |
-        make install-all-k8s IMG=redhat-appstudio-managedgitops-image:latest
+        export WORKLOAD_KUBECONFIG="/secrets/managed-gitops-unit-tests-hive-admin-kubeconfig/kubeconfig"
+        make devenv-k8s
+        kubectl port-forward --namespace gitops svc/gitops-postgresql-staging 5432:5432 &
         make test
-      from: redhat-appstudio-managedgitops-image
+        killall kubectl
+      from: src
       resources:
         requests:
           cpu: 100m
@@ -56,9 +59,7 @@ tests:
     test:
     - as: managed-gitops-e2e-tests
       cli: latest
-      commands: |
-        make install-all-k8s IMG=redhat-appstudio-managedgitops-image:latest
-        make test-e2e
+      commands: openshiftci-presubmit-all-tests.sh
       from: redhat-appstudio-managedgitops-image
       resources:
         requests:
