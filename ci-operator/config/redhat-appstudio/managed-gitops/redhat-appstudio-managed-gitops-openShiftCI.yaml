@@ -59,7 +59,10 @@ tests:
     test:
     - as: managed-gitops-e2e-tests
       cli: latest
-      commands: openshiftci-presubmit-all-tests.sh
+      commands: |
+        export WORKLOAD_KUBECONFIG="/secrets/managed-gitops-e2e-tests-hive-admin-kubeconfig/kubeconfig"
+        export PATH="$PATH:$(pwd)"
+        make test-e2e
       from: redhat-appstudio-managedgitops-image
       resources:
         requests:
