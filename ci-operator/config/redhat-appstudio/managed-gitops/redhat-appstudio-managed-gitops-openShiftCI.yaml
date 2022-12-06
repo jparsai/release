@@ -31,6 +31,13 @@ resources:
       memory: 200Mi
 tests:
 - as: managed-gitops-e2e-tests
+  cluster_claim:
+    architecture: amd64
+    cloud: aws
+    owner: openshift-ci
+    product: ocp
+    timeout: 1h0m0s
+    version: "4.11"
   steps:
     cluster_profile: aws
     test:
@@ -40,7 +47,7 @@ tests:
       resources:
         requests:
           cpu: 100m
-    workflow: ipi-aws
+    workflow: generic-claim
 zz_generated_metadata:
   branch: openShiftCI
   org: redhat-appstudio
