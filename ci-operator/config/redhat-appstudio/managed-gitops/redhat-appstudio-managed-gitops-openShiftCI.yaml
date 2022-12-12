@@ -39,7 +39,6 @@ tests:
     timeout: 1h0m0s
     version: "4.11"
   steps:
-    cluster_profile: aws
     test:
     - as: managed-gitops-e2e-step
       commands: scripts/openshiftci-presubmit-all-tests.sh
